@@ -16,9 +16,9 @@ module Dragonfly
         attr_reader :public_path, :cache_path, :cache
 
         def initialize(public_path:, cache_path: 'dragonfly-cache')
-          FileUtils.mkdir_p(File.join(public_path, cache_path))
           @public_path = public_path
           @cache_path = cache_path
+          FileUtils.mkdir_p(File.join(public_path, cache_path))
           @cache = read_disk_cache
         end
 
@@ -35,11 +35,15 @@ module Dragonfly
           File.join(public_path, cache_path, job.sha, [job.basename, job.ext].join('.'))
         end
 
+        def store(job)
+          fullpath = job_cache_path(job)
+          @cache[job.sha] = self.class.extract_public_path(path: fullpath, public_path: public_path)
+          job.to_file(fullpath, mode: 0644) unless File.exists?(fullpath)
+        end
+
         def call(app, options = {})
           app.server.before_serve do |job, env|
-            fullpath = job_cache_path(job)
-            job.to_file(fullpath, mode: 0644)
-            @cache[job.sha] = self.class.extract_public_path(path: fullpath, public_path: public_path)
+            store(job)
           end
 
           app.define_url do |app, job, opts|

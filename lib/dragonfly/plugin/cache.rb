@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'openssl'
+require "dragonfly"
 require_relative "cache/version"
 require_relative "cache/local"
 

@@ -15,5 +15,6 @@ RSpec.configure do |config|
 end
 
 require 'byebug'
+require_relative 'support/file_helpers.rb'
+require_relative 'support/dragonfly.rb'
 
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].sort.each { |f| require f }

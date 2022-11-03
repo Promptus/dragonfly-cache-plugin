@@ -23,7 +23,6 @@ RSpec.describe Dragonfly::Plugin::Cache::Local do
   end
 
   describe 'read_disk_cache' do
-    let(:public_path) { test_server_root }
     let(:cache_path) { 'static-cache' }
 
     subject { cache.read_disk_cache }
@@ -47,5 +46,45 @@ RSpec.describe Dragonfly::Plugin::Cache::Local do
     subject { cache.job_cache_path(job) }
 
     it { is_expected.to eql(File.join(public_path, '/dragonfly-cache/6a4bcf/image.webp')) }
+  end
+
+  describe 'url_for' do
+    let(:job) { double(:job, sha: '6a4bcf' ) }
+    let(:app) { double(:app, server: double(:server, url_for: '/media/UGI34a/dragonfly.jpg?712c78ae') ) }
+    let(:opts) { {} }
+    subject { cache.url_for(app, job, opts) }
+
+    it { is_expected.to eql('/media/UGI34a/dragonfly.jpg?712c78ae') }
+
+    context 'file is in the cache' do
+      let(:cache_path) { 'static-cache' }
+
+      it { expect(cache.cache[job.sha]).to eql('/static-cache/6a4bcf/pexels-leigh-heasley-816294.jpg') }
+      it { is_expected.to eql('/static-cache/6a4bcf/pexels-leigh-heasley-816294.jpg') }
+    end
+
+    context 'file is not in the cache but on disk' do
+      let(:cache_path) { 'static-cache' }
+
+      before { cache.cache.clear }
+
+      it { expect(cache.cache[job.sha]).to be_nil }
+      it { is_expected.to eql('/static-cache/6a4bcf/pexels-leigh-heasley-816294.jpg') }
+      it { expect { subject }.to change { cache.cache[job.sha] }.from(nil).to('/static-cache/6a4bcf/pexels-leigh-heasley-816294.jpg') }
+    end
+  end
+
+  describe 'store' do
+    let(:job) { Dragonfly.app.fetch('6a4bcf/pexels-leigh-heasley-816294.jpg') }
+    let(:cache_file_path) { File.join(public_path, cache_path, '1dc2af4a00824a52/pexels-leigh-heasley-816294.jpg') }
+
+    subject { cache.store(job) }
+
+    before { FileUtils.rm_rf(File.join(public_path, cache_path)) }
+    after { FileUtils.rm_rf(File.join(public_path, cache_path)) }
+
+    it { expect { subject }.to change { File.exists?(cache_file_path) }.from(false).to(true) }
+    it { expect { subject }.to change { cache.cache['1dc2af4a00824a52'] }.from(nil).to('/dragonfly-cache/1dc2af4a00824a52/pexels-leigh-heasley-816294.jpg') }
+
   end
 end
