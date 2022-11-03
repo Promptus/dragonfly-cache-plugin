@@ -6,10 +6,9 @@ require_relative "cache/version"
 require_relative "cache/local"
 
 module Dragonfly
-  module Plugin
-    module Cache
-      class Error < StandardError; end
-      # Your code goes here...
-    end
+  module Cache
+    
   end
 end
+
+Dragonfly::App.register_plugin(:dragonfly_cache) { Dragonfly::Cache::Plugin.new }

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "dragonfly/plugin/cache"
+require "dragonfly/cache"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

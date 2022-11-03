@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/dragonfly/plugin/cache/version"
+require_relative "lib/dragonfly/cache/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "dragonfly-cache-plugin"
-  spec.version       = Dragonfly::Plugin::Cache::VERSION
+  spec.version       = Dragonfly::Cache::VERSION
   spec.authors       = ["Lars Kuhnt"]
   spec.email         = ["lars.kuhnt@gmail.com"]
 
