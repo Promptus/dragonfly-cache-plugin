@@ -20,8 +20,17 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Require the gem somewhere in your code, for rails a good choice is `config/initializers/dragonfly.rb`
 
+    require 'dragonfly/plugin/cache'
+
+And then add the plugin to your dragonfly config
+
+    Dragonfly.app.configure do
+      plugin Dragonfly::Plugin::Cache::Local.new(public_path: Rails.root.join('public'))
+      ...
+    end
+    
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
