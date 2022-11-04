@@ -12,7 +12,6 @@ module Dragonfly
         def job_cache_path(job)
           segments = url_format.split('/').map do |segment|
             if (method_name = segment[/:(\w+)/, 1])
-              byebug
               job.public_send(method_name)
             else
               segment
