@@ -1,15 +1,15 @@
 require 'spec_helper'
 
-RSpec.describe Dragonfly::Cache::Local do
+RSpec.describe Dragonfly::Cache::Adapter::Local do
 
   let(:public_path) { test_server_root }
   let(:cache_path) { 'dragonfly-cache' }
-  subject(:cache) { Dragonfly::Cache::Local.new(public_path: public_path, cache_path: cache_path) }
+  subject(:cache) { Dragonfly::Cache::Adapter::Local.new(public_path: public_path, cache_path: cache_path) }
 
   describe "::extract_sha" do
     let(:path) { File.join(cache_path, '3a87', 'image.jpg').to_s }
 
-    subject { Dragonfly::Cache::Local.extract_sha(path: path) }
+    subject { Dragonfly::Cache::Adapter::Local.extract_sha(path: path) }
 
     it { is_expected.to eql('3a87') }
   end
@@ -17,7 +17,7 @@ RSpec.describe Dragonfly::Cache::Local do
   describe "::extract_public_path" do
     let(:path) { File.join(public_path, cache_path, '3a87', 'image.jpg').to_s }
 
-    subject { Dragonfly::Cache::Local.extract_public_path(path: path, public_path: public_path) }
+    subject { Dragonfly::Cache::Adapter::Local.extract_public_path(path: path, public_path: public_path) }
 
     it { is_expected.to eql('/dragonfly-cache/3a87/image.jpg') }
   end
@@ -42,7 +42,7 @@ RSpec.describe Dragonfly::Cache::Local do
   end
 
   describe 'job_cache_path' do
-    let(:job) { double(:job, sha: '6a4bcf', basename: 'image', ext: 'webp' ) }
+    let(:job) { double(:job, sha: '6a4bcf', name: 'image.webp' ) }
     subject { cache.job_cache_path(job) }
 
     it { is_expected.to eql(File.join(public_path, '/dragonfly-cache/6a4bcf/image.webp')) }

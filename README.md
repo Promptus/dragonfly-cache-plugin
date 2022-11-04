@@ -27,9 +27,11 @@ Require the gem somewhere in your code, for rails a good choice is `config/initi
 And then add the plugin to your dragonfly config
 
     Dragonfly.app.configure do
-      plugin Dragonfly::Plugin::Cache::Local.new(public_path: Rails.root.join('public'))
+      plugin :dragonfly_cache public_path: Rails.root.join('public')
       ...
     end
+
+By default the UrlFormat adapter is used. It stores the generated files to the `app.server.url_format` config. You should configure your reverse proxy (NGINX, Apache etc) to try for the file first and then pass to the dragonfly server.
 
 ## Development
 

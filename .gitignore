@@ -12,3 +12,4 @@
 .byebug_history
 
 /spec/test_server_root/dragonfly-cache
+/spec/test_server_root/media
