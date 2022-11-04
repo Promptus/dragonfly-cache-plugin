@@ -27,12 +27,21 @@ Require the gem somewhere in your code, for rails a good choice is `config/initi
 And then add the plugin to your dragonfly config
 
     Dragonfly.app.configure do
+      url_format "/media/:sha/:name"
       plugin :dragonfly_cache public_path: Rails.root.join('public')
       ...
     end
 
 By default the UrlFormat adapter is used. It stores the generated files to the `app.server.url_format` config. You should configure your reverse proxy (NGINX, Apache etc) to try for the file first and then pass to the dragonfly server.
 
+CAUTION: make sure to define the url_format before you register the plugin if you use the adapter url_format
+
+You should also consider not using the plugin in test and development by e.g.
+
+    if Rails.application.config.action_controller.perform_caching
+      plugin :dragonfly_cache, public_path: Rails.root.join('public')
+    end
+    
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

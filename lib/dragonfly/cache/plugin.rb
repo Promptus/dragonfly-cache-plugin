@@ -2,7 +2,6 @@
 
 require 'openssl'
 require "dragonfly"
-require_relative "local"
 
 module Dragonfly
   module Cache
@@ -10,7 +9,8 @@ module Dragonfly
       
       def call(app, options = {})
         public_path = options[:public_path]
-        raise 'public_path does not exist' unless File.exists?(public_path)
+        raise ::Dragonfly::Cache::ConfigurationError, 'public_path does not exist' unless File.exists?(public_path)
+        options[:adapter] ||= :url_format
 
         app.env[:cache_plugin] = if options[:adapter].to_sym == :local
           cache_path  = options[:cache_path] || 'dragonfly-cache'
@@ -18,11 +18,13 @@ module Dragonfly
             public_path: public_path,
             cache_path: cache_path
           )
-        else
+        elsif :url_format
           Dragonfly::Cache::Adapter::UrlFormat.new(
             public_path: public_path,
             url_format: app.server.url_format
           )
+        else
+          raise ::Dragonfly::Cache::ConfigurationError, "Adapter #{options[:adapter]} is invalid"
         end
         
         app.server.before_serve do |job, env|
